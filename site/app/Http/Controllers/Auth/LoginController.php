@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
+use Flugg\Responder\Responder;
+use Illuminate\Http\JsonResponse;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
@@ -35,5 +40,54 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+
+    /**
+     * Login route
+     *
+     * @param Request $request
+     * @param Responder $responder
+     * @return JsonResponse
+     */
+    public function login(Request $request, Responder $responder)
+    {
+        $credentials = $request->only('email', 'password');
+
+        $result = [
+            'message' => 'Acesso não autorizado'
+        ];
+
+        $success = false;
+
+        $rules = [
+            'email' => 'required|email',
+            'password' => 'required'
+        ];
+
+        $validator = Validator::make($credentials, $rules);
+
+        if ($validator->validated()) {
+            $token = JWTAuth::attempt($credentials);
+
+            if ($token) {
+                $result = [
+                    'access_token' => $token,
+                    'expires_in_seconds' => 60
+                ];
+
+                $success = true;
+            }
+        }
+
+        if ($success) {
+            return $responder
+                ->success($result)
+                ->respond();
+        }
+
+        return $responder
+            ->error(403, 'Acesso não autorizado')
+            ->respond(403);
     }
 }
