@@ -20,6 +20,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('auth/login', 'Auth\LoginController@login');
+Route::post('auth/refresh', 'Auth\LoginController@refresh');
+
 
 Route::group([
     'middleware' => [

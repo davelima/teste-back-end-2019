@@ -39,7 +39,10 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
+        $this->middleware('guest')->except([
+            'logout',
+            'refresh'
+        ]);
     }
 
 
@@ -102,6 +105,21 @@ class LoginController extends Controller
 
         return $responder->success([
             'message' => 'Usuário deslogado com sucesso.'
+        ])->respond();
+    }
+
+    /**
+     * @param Request $request
+     * @param Responder $responder
+     * @return JsonResponse
+     */
+    public function refresh(Request $request, Responder $responder)
+    {
+        $newToken = auth()->refresh();
+
+        return $responder->success([
+            'access_token' => $newToken,
+            'expires_in_seconds' => 60
         ])->respond();
     }
 }
