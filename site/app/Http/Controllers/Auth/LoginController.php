@@ -12,6 +12,12 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
 {
+    /**
+     * Default token TTL (Minutes)
+     * @var int
+     */
+    CONST AUTH_TTL = 1;
+
     /*
     |--------------------------------------------------------------------------
     | Login Controller
@@ -46,7 +52,6 @@ class LoginController extends Controller
         ]);
     }
 
-
     /**
      * Login route
      *
@@ -72,12 +77,12 @@ class LoginController extends Controller
         $validator = Validator::make($credentials, $rules);
 
         if ($validator->validated()) {
-            $token = JWTAuth::attempt($credentials);
+            $token = auth()->setTTL(self::AUTH_TTL)->attempt($credentials);
 
             if ($token) {
                 $result = [
                     'access_token' => $token,
-                    'expires_in_seconds' => 60
+                    'expires_in_seconds' => (self::AUTH_TTL * 60)
                 ];
 
                 $success = true;
@@ -116,16 +121,17 @@ class LoginController extends Controller
      */
     public function refresh(Request $request, Responder $responder)
     {
-        $newToken = auth()->refresh();
+        $newToken = auth()->setTTL(self::AUTH_TTL)->refresh();
 
         return $responder->success([
             'access_token' => $newToken,
-            'expires_in_seconds' => 60
+            'expires_in_seconds' => (self::AUTH_TTL * 60)
         ])->respond();
     }
 
     public function me(Request $request, Responder $responder)
     {
+
         $user = JWTAuth::user();
         $data = [
             'id' => $user->id,

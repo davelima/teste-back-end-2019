@@ -2,8 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class CheckAuthentication extends Middleware
 {
@@ -17,7 +18,12 @@ class CheckAuthentication extends Middleware
      */
     public function handle($request, \Closure $next, ...$guards)
     {
-        if (! auth()->check()) {
+        /**
+         * @var \Tymon\JWTAuth\Facades\JWTAuth $token
+         */
+        $token = JWTAuth::parseToken();
+
+        if (! $token->check(true)) {
             return responder()
                 ->error(403, 'Acesso não autorizado')
                 ->respond(403);
