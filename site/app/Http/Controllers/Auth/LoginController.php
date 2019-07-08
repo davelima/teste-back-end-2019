@@ -90,4 +90,18 @@ class LoginController extends Controller
             ->error(403, 'Acesso não autorizado')
             ->respond(403);
     }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function logout(Request $request, Responder $responder)
+    {
+        auth()->logout();
+
+        return $responder->success([
+            'message' => 'Usuário deslogado com sucesso.'
+        ])->respond();
+    }
 }

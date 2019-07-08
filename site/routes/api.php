@@ -20,3 +20,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('auth/login', 'Auth\LoginController@login');
+
+Route::group([
+    'middleware' => [
+        'authenticated',
+        'jwt.auth'
+    ]
+], function() {
+    Route::post('auth/logout', 'Auth\LoginController@logout');
+});
