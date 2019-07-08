@@ -30,4 +30,5 @@ Route::group([
     ]
 ], function() {
     Route::post('auth/logout', 'Auth\LoginController@logout');
+    Route::post('auth/me', 'Auth\LoginController@me');
 });

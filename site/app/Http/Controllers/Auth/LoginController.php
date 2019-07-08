@@ -41,7 +41,8 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except([
             'logout',
-            'refresh'
+            'refresh',
+            'me'
         ]);
     }
 
@@ -121,5 +122,16 @@ class LoginController extends Controller
             'access_token' => $newToken,
             'expires_in_seconds' => 60
         ])->respond();
+    }
+
+    public function me(Request $request, Responder $responder)
+    {
+        $user = JWTAuth::user();
+        $data = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email
+        ];
+        return $responder->success($data);
     }
 }
