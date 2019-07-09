@@ -21,7 +21,7 @@ class Product extends Model
      * @var array
      */
     protected $casts = [
-        'price' => 'decimal',
-        'weight' => 'decimal'
+        'price' => 'integer',
+        'weight' => 'integer'
     ];
 }

@@ -30,4 +30,13 @@ Route::group([
     Route::post('auth/logout', 'Auth\LoginController@logout');
     Route::post('auth/me', 'Auth\LoginController@me');
     Route::post('auth/refresh', 'Auth\LoginController@refresh');
+
+    /*
+     * CRUD - Products
+     */
+    Route::apiResource('product', 'ProductController');
+
+    Route::fallback(function(\Flugg\Responder\Responder $responder) {
+        return $responder->error(404, 'Produto não encontrado')->respond(404);
+    })->name('productFallback');
 });
