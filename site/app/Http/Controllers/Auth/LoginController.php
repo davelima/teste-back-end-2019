@@ -53,13 +53,13 @@ class LoginController extends Controller
     }
 
     /**
-     * Login route
+     * Log user in
      *
      * @param Request $request
      * @param Responder $responder
      * @return JsonResponse
      */
-    public function login(Request $request, Responder $responder)
+    public function login(Request $request, Responder $responder): JsonResponse
     {
         $credentials = $request->only('email', 'password');
 
@@ -101,11 +101,14 @@ class LoginController extends Controller
     }
 
     /**
+     * Logout current user
+     *
      * @param Request $request
+     * @param Responder $responder
      * @return JsonResponse
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function logout(Request $request, Responder $responder)
+    public function logout(Request $request, Responder $responder): JsonResponse
     {
         auth()->logout();
 
@@ -115,11 +118,12 @@ class LoginController extends Controller
     }
 
     /**
-     * @param Request $request
+     * Refresh token for current user
+     *
      * @param Responder $responder
      * @return JsonResponse
      */
-    public function refresh(Request $request, Responder $responder)
+    public function refresh(Responder $responder): JsonResponse
     {
         $newToken = auth()->setTTL(self::AUTH_TTL)->refresh();
 
@@ -129,15 +133,22 @@ class LoginController extends Controller
         ])->respond();
     }
 
-    public function me(Request $request, Responder $responder)
+    /**
+     * Retrieve information of current user
+     *
+     * @param Request $request
+     * @param Responder $responder
+     * @return JsonResponse
+     */
+    public function me(Request $request, Responder $responder): JsonResponse
     {
-
         $user = JWTAuth::user();
         $data = [
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email
         ];
-        return $responder->success($data);
+
+        return $responder->success($data)->respond();
     }
 }

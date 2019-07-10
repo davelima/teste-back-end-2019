@@ -13,9 +13,10 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Responder $responder
+     * @return JsonResponse
      */
-    public function index(Responder $responder)
+    public function index(Responder $responder): JsonResponse
     {
         $products = Product::all();
 
@@ -27,7 +28,7 @@ class ProductController extends Controller
      * @param Responder $responder
      * @return JsonResponse
      */
-    public function store(Request $request, Responder $responder)
+    public function store(Request $request, Responder $responder): JsonResponse
     {
         $result = [
             'message' => 'Requisição inválida'
@@ -66,9 +67,10 @@ class ProductController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Responder $responder
+     * @return JsonResponse
      */
-    public function show(Product $product, Responder $responder)
+    public function show(Product $product, Responder $responder): JsonResponse
     {
         return $responder->success($product)->respond(200);
     }
@@ -81,7 +83,7 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return JsonResponse
      */
-    public function update(Request $request, Responder $responder, Product $product = null)
+    public function update(Request $request, Responder $responder, Product $product): JsonResponse
     {
         $result = [
             'message' => 'Requisição inválida'
@@ -109,7 +111,7 @@ class ProductController extends Controller
 
             $result['message'] = 'Produto salvo com sucesso';
             $result['productId'] = $product->id;
-            $resultCode = 201;
+            $resultCode = 200;
 
             return $responder->success($result)->respond($resultCode);
         }
@@ -120,10 +122,12 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @param Responder $responder
+     * @return JsonResponse
+     * @throws \Exception
      */
-    public function destroy(Product $product, Responder $responder)
+    public function destroy(Product $product, Responder $responder): JsonResponse
     {
         $product->delete();
 
